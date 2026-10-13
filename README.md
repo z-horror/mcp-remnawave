@@ -387,7 +387,7 @@ Environment variables are passed via `.env` file or `docker-compose.yml`.
 | `node_plugins_execute` | Execute node plugin | write |
 | `node_plugins_torrent_truncate` | Truncate torrent blocker reports | write |
 
-#### IP Control (5 tools)
+#### Connections (5 tools)
 
 | Tool | Description | Mode |
 |------|-------------|------|
@@ -463,7 +463,7 @@ src/
 │   ├── node-plugins.ts            # Node plugins (11 tools)
 │   ├── external-squads.ts         # External squads (8 tools)
 │   ├── subscription-page-configs.ts # Subscription page configs (7 tools)
-│   ├── ip-control.ts              # IP control (5 tools)
+│   ├── ip-control.ts              # Connections (5 tools)
 │   ├── snippets.ts                # Snippets (4 tools)
 │   ├── metadata.ts                # Node & user metadata (4 tools)
 │   ├── api-tokens.ts              # API tokens (3 tools)
@@ -487,17 +487,35 @@ MIT
 
 MCP-сервер ([Model Context Protocol](https://modelcontextprotocol.io)), предоставляющий LLM-клиентам (Claude Desktop, Cursor, Windsurf и др.) инструменты для управления VPN-панелью [Remnawave](https://github.com/remnawave/).
 
-**Версия:** 1.2.0 | **Remnawave API:** 2.7.4
+**Версия:** 2.0.0 | **Remnawave API:** 3.4.15
+
+> **Форк:** сообщественный форк [TrackLine/mcp-remnawave](https://github.com/TrackLine/mcp-remnawave), обновлённый под **Remnawave 3.x** (проверено на панели 3.4.4, сборка на `@remnawave/backend-contract` 3.4.15). Оригинал © TrackLine, MIT.
 
 ### Возможности
 
-- **153 инструмента** — полное управление пользователями, нодами, хостами, подписками, группами, HWID, конфиг-профилями, inbounds, API-токенами, биллингом, сниппетами, внешними группами, настройками, страницами подписок, плагинами нод, IP-контролем и метаданными
+- **152 инструмента** — полное управление пользователями, нодами, хостами, подписками, группами, HWID, конфиг-профилями, inbounds, API-токенами, биллингом, сниппетами, внешними группами, настройками, страницами подписок, плагинами нод, соединениями и метаданными
 - **3 ресурса** — статистика панели, статус нод, проверка здоровья в реальном времени
 - **5 промптов** — пошаговые сценарии для типичных задач
-- **Readonly-режим** — ограничение до 69 инструментов только для чтения
+- **Readonly-режим** — ограничение инструментами только для чтения
+- **Редактирование секретов** — приватные ключи, пароли, токены и ссылки подписки маскируются в выводе инструментов и ресурсов
 - **Поддержка Caddy** — заголовок `X-Api-Key` для панелей за Caddy с кастомным путём
 - **Type-safe** — построен на [@remnawave/backend-contract](https://www.npmjs.com/package/@remnawave/backend-contract) для валидации API-маршрутов
 - **stdio транспорт** — работает с Claude Desktop, Cursor, Windsurf и любым MCP-совместимым клиентом
+
+### Совместимость с Remnawave 3.x
+
+В 3.x идентификаторы пользователей перешли с UUID на числовые `id`, и часть маршрутов изменилась:
+
+- **Пользователи адресуются числовым `id`**: инструменты `users_*` принимают `id`; массовые операции — `userIds` (числа, максимум 500).
+- Удалён инструмент `users_get_by_subscription_uuid` (эндпоинт больше не существует).
+- `subscriptions_get_by_uuid` → `subscriptions_get_by_user_id`; ключи подключения, `ip_control_fetch_ips`, HWID и метаданные пользователя теперь принимают числовой `userId`.
+- Внешние группы в 3.x назначаются пользователю; `external_squads_add_users` / `external_squads_remove_users` устанавливают/сбрасывают `externalSquadUuid`.
+- `hosts_bulk_set_inbound` / `hosts_bulk_set_port` теперь используют `POST /api/hosts/bulk/update`.
+- Инструменты «IP Control» переведены на API **Connections** из 3.x.
+
+### Редактирование секретов
+
+Вывод инструментов и ресурсов перед отправкой модели очищается: Reality **приватные ключи**, секретные ключи нод, пароли (`trojanPassword`, `ssPassword`), API-токены и ссылки подписок заменяются на `***REDACTED***`. Отключается переменной окружения `REMNAWAVE_REDACT_SECRETS=false`.
 
 ### Требования
 
@@ -846,7 +864,7 @@ docker compose up -d
 | `node_plugins_execute` | Выполнить плагин | write |
 | `node_plugins_torrent_truncate` | Очистить отчёты торрент-блокировщика | write |
 
-#### IP-контроль (5 инструментов)
+#### Соединения (5 инструментов)
 
 | Инструмент | Описание | Режим |
 |------------|----------|-------|
@@ -922,7 +940,7 @@ src/
 │   ├── node-plugins.ts            # Плагины нод (11)
 │   ├── external-squads.ts         # Внешние группы (8)
 │   ├── subscription-page-configs.ts # Страницы подписок (7)
-│   ├── ip-control.ts              # IP-контроль (5)
+│   ├── ip-control.ts              # соединения (5)
 │   ├── snippets.ts                # Сниппеты (4)
 │   ├── metadata.ts                # Метаданные нод и пользователей (4)
 │   ├── api-tokens.ts              # API-токены (3)
