@@ -5,9 +5,9 @@ import { toolResult, toolError } from './helpers.js';
 
 export function registerIpControlTools(server: McpServer, client: RemnawaveClient, readonly: boolean) {
     server.tool('ip_control_fetch_ips', 'Fetch active IPs for a user (async job)', {
-        uuid: z.string().describe('User UUID'),
-    }, async ({ uuid }) => {
-        try { return toolResult(await client.fetchIps(uuid)); } catch (e) { return toolError(e); }
+        userId: z.number().int().describe('User numeric ID'),
+    }, async ({ userId }) => {
+        try { return toolResult(await client.fetchIps(userId)); } catch (e) { return toolError(e); }
     });
 
     server.tool('ip_control_get_fetch_ips_result', 'Get result of an IP fetch job', {
@@ -37,8 +37,8 @@ export function registerIpControlTools(server: McpServer, client: RemnawaveClien
                 ipAddresses: z.array(z.string()).min(1).describe('Array of IP addresses'),
             }),
             z.object({
-                by: z.literal('userUuids'),
-                userUuids: z.array(z.string()).min(1).describe('Array of user UUIDs'),
+                by: z.literal('userIds'),
+                userIds: z.array(z.number().int()).min(1).describe('Array of user numeric IDs'),
             }),
         ]).describe('What to drop connections by'),
         targetNodes: z.union([

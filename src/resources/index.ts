@@ -1,5 +1,6 @@
 import { McpServer, ResourceTemplate } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { RemnawaveClient } from '../client/index.js';
+import { redact } from '../redact.js';
 
 export function registerAllResources(
     server: McpServer,
@@ -20,7 +21,7 @@ export function registerAllResources(
                     {
                         uri: 'remnawave://stats',
                         mimeType: 'application/json',
-                        text: JSON.stringify(stats, null, 2),
+                        text: JSON.stringify(redact(stats), null, 2),
                     },
                 ],
             };
@@ -41,7 +42,7 @@ export function registerAllResources(
                     {
                         uri: 'remnawave://nodes',
                         mimeType: 'application/json',
-                        text: JSON.stringify(nodes, null, 2),
+                        text: JSON.stringify(redact(nodes), null, 2),
                     },
                 ],
             };
@@ -62,7 +63,7 @@ export function registerAllResources(
                     {
                         uri: 'remnawave://health',
                         mimeType: 'application/json',
-                        text: JSON.stringify(health, null, 2),
+                        text: JSON.stringify(redact(health), null, 2),
                     },
                 ],
             };
@@ -71,22 +72,22 @@ export function registerAllResources(
 
     server.resource(
         'user-details',
-        new ResourceTemplate('remnawave://users/{uuid}', {
+        new ResourceTemplate('remnawave://users/{userId}', {
             list: undefined,
         }),
         {
-            description: 'Detailed information about a specific Remnawave user',
+            description: 'Detailed information about a specific Remnawave user (by numeric ID)',
             mimeType: 'application/json',
         },
         async (uri, params) => {
-            const uuid = params.uuid as string;
-            const user = await client.getUserByUuid(uuid);
+            const userId = params.userId as string;
+            const user = await client.getUserById(userId);
             return {
                 contents: [
                     {
                         uri: uri.href,
                         mimeType: 'application/json',
-                        text: JSON.stringify(user, null, 2),
+                        text: JSON.stringify(redact(user), null, 2),
                     },
                 ],
             };

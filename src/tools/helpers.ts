@@ -1,9 +1,11 @@
+import { redact } from '../redact.js';
+
 export function toolResult(data: unknown) {
     return {
         content: [
             {
                 type: 'text' as const,
-                text: JSON.stringify(data, null, 2),
+                text: JSON.stringify(redact(data), null, 2),
             },
         ],
     };

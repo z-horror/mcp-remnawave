@@ -10,17 +10,35 @@
 
 MCP server ([Model Context Protocol](https://modelcontextprotocol.io)) providing LLM clients (Claude Desktop, Cursor, Windsurf, etc.) with tools to manage a [Remnawave](https://github.com/remnawave/) VPN panel.
 
-**Version:** 1.2.0 | **Remnawave API:** 2.7.4
+**Version:** 2.0.0 | **Remnawave API:** 3.4.15
+
+> **Fork notice:** Community fork of [TrackLine/mcp-remnawave](https://github.com/TrackLine/mcp-remnawave), updated for **Remnawave 3.x** (tested against panel 3.4.4, built against `@remnawave/backend-contract` 3.4.15). Original project © TrackLine, MIT.
 
 ### Features
 
-- **153 tools** — full management of users, nodes, hosts, subscriptions, squads, HWID, config profiles, inbounds, API tokens, billing, snippets, external squads, settings, subscription page configs, node plugins, IP control, and metadata
+- **152 tools** — full management of users, nodes, hosts, subscriptions, squads, HWID, config profiles, inbounds, API tokens, billing, snippets, external squads, settings, subscription page configs, node plugins, connections, and metadata
 - **3 resources** — real-time panel stats, node status, health checks
 - **5 prompts** — guided workflows for common tasks
-- **Readonly mode** — restrict to 69 read-only tools for safe monitoring
+- **Readonly mode** — restrict to read-only tools for safe monitoring
+- **Secret redaction** — private keys, passwords, tokens and subscription links are masked in tool/resource output
 - **Caddy support** — `X-Api-Key` header for panels behind Caddy with custom path
 - **Type-safe** — built on [@remnawave/backend-contract](https://www.npmjs.com/package/@remnawave/backend-contract) for API route validation
 - **stdio transport** — works with Claude Desktop, Cursor, Windsurf, and any MCP-compatible client
+
+### Remnawave 3.x compatibility
+
+Remnawave 3.x switched user identifiers from UUID to numeric IDs and reworked several routes. This fork accounts for that:
+
+- **Users are addressed by numeric `id`**: `users_*` tools take `id`; bulk user tools take `userIds` (numbers, max 500).
+- Removed tool `users_get_by_subscription_uuid` (the endpoint no longer exists).
+- `subscriptions_get_by_uuid` → `subscriptions_get_by_user_id`; connection keys, `ip_control_fetch_ips`, HWID and user-metadata endpoints now take a numeric user ID.
+- External squad membership is per-user in 3.x; `external_squads_add_users` / `external_squads_remove_users` set/clear the user's `externalSquadUuid`.
+- `hosts_bulk_set_inbound` / `hosts_bulk_set_port` now issue `POST /api/hosts/bulk/update`.
+- "IP Control" tools now use the 3.x **Connections** API.
+
+### Secret redaction
+
+Tool and resource output is scrubbed before it reaches the model: Reality **private keys**, node secret keys, passwords (`trojanPassword`, `ssPassword`), API tokens and subscription links are replaced with `***REDACTED***`. Disable with the environment variable `REMNAWAVE_REDACT_SECRETS=false`.
 
 ### Requirements
 
@@ -30,7 +48,7 @@ MCP server ([Model Context Protocol](https://modelcontextprotocol.io)) providing
 ### Installation
 
 ```bash
-git clone https://github.com/TrackLine/mcp-remnawave.git
+git clone https://github.com/z-horror/mcp-remnawave.git
 cd mcp-remnawave
 npm install
 npm run build
@@ -489,7 +507,7 @@ MCP-сервер ([Model Context Protocol](https://modelcontextprotocol.io)), п
 ### Установка
 
 ```bash
-git clone https://github.com/TrackLine/mcp-remnawave.git
+git clone https://github.com/z-horror/mcp-remnawave.git
 cd mcp-remnawave
 npm install
 npm run build

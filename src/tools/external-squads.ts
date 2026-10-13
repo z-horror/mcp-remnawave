@@ -35,18 +35,18 @@ export function registerExternalSquadTools(server: McpServer, client: RemnawaveC
         try { await client.deleteExternalSquad(uuid); return toolResult({ success: true, message: `Squad ${uuid} deleted` }); } catch (e) { return toolError(e); }
     });
 
-    server.tool('external_squads_add_users', 'Add users to an external squad', {
+    server.tool('external_squads_add_users', 'Assign an external squad to users (sets externalSquadUuid)', {
         squadUuid: z.string().describe('Squad UUID'),
-        userUuids: z.array(z.string()).describe('Array of user UUIDs to add'),
-    }, async ({ squadUuid, userUuids }) => {
-        try { return toolResult(await client.addUsersToExternalSquad(squadUuid, userUuids)); } catch (e) { return toolError(e); }
+        userIds: z.array(z.number().int()).describe('Array of user numeric IDs'),
+    }, async ({ squadUuid, userIds }) => {
+        try { return toolResult(await client.addUsersToExternalSquad(squadUuid, userIds)); } catch (e) { return toolError(e); }
     });
 
-    server.tool('external_squads_remove_users', 'Remove users from an external squad', {
+    server.tool('external_squads_remove_users', 'Unassign the external squad from users (clears externalSquadUuid)', {
         squadUuid: z.string().describe('Squad UUID'),
-        userUuids: z.array(z.string()).describe('Array of user UUIDs to remove'),
-    }, async ({ squadUuid, userUuids }) => {
-        try { return toolResult(await client.removeUsersFromExternalSquad(squadUuid, userUuids)); } catch (e) { return toolError(e); }
+        userIds: z.array(z.number().int()).describe('Array of user numeric IDs'),
+    }, async ({ squadUuid, userIds }) => {
+        try { return toolResult(await client.removeUsersFromExternalSquad(squadUuid, userIds)); } catch (e) { return toolError(e); }
     });
 
     server.tool('external_squads_reorder', 'Reorder external squads', {

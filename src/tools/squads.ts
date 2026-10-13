@@ -98,15 +98,15 @@ export function registerSquadTools(
         'Add users to an internal squad',
         {
             squadUuid: z.string().describe('Squad UUID'),
-            userUuids: z
-                .array(z.string())
-                .describe('Array of user UUIDs to add'),
+            userIds: z
+                .array(z.number().int())
+                .describe('Array of user numeric IDs to add'),
         },
-        async ({ squadUuid, userUuids }) => {
+        async ({ squadUuid, userIds }) => {
             try {
                 const result = await client.addUsersToSquad(
                     squadUuid,
-                    userUuids,
+                    userIds,
                 );
                 return toolResult(result);
             } catch (e) {
@@ -120,15 +120,15 @@ export function registerSquadTools(
         'Remove users from an internal squad',
         {
             squadUuid: z.string().describe('Squad UUID'),
-            userUuids: z
-                .array(z.string())
-                .describe('Array of user UUIDs to remove'),
+            userIds: z
+                .array(z.number().int())
+                .describe('Array of user numeric IDs to remove'),
         },
-        async ({ squadUuid, userUuids }) => {
+        async ({ squadUuid, userIds }) => {
             try {
                 const result = await client.removeUsersFromSquad(
                     squadUuid,
-                    userUuids,
+                    userIds,
                 );
                 return toolResult(result);
             } catch (e) {
