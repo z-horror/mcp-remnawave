@@ -1,3 +1,8 @@
+> [!IMPORTANT]
+> The original project ([TrackLine/mcp-remnawave](https://github.com/TrackLine/mcp-remnawave)) is closed and has moved to https://github.com/3APA3A-3AHO3A/remnawave-mcp. This repository is a fork updated for Remnawave 3.x.
+>
+> Оригинальный проект ([TrackLine/mcp-remnawave](https://github.com/TrackLine/mcp-remnawave)) закрыт и переехал в https://github.com/3APA3A-3AHO3A/remnawave-mcp. Этот репозиторий — форк, обновлённый под Remnawave 3.x.
+
 # mcp-remnawave
 
 [English](#english) | [Русский](#русский)
